@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Task Manager</string>
+    <string name="btn_add_task">Agregar tarea</string>
+    <string name="btn_save">Guardar</string>
+    <string name="hint_task_title">Título de la tarea</string>
+    <string name="hint_task_description">Descripción (opcional)</string>
+</resources>
