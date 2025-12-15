@@ -24,6 +24,6 @@ El objetivo principal es demostrar el uso de **Room**, **DAO**, **RecyclerView**
 ### 2️⃣ Instalación
 git clone https://github.com/aacastro22/Task-Manager.git
 
-(./screenshots/Captura1.jpeg)
+![](./screenshots/Captura1.jpeg)
 
-(./screenshots/Captura2.jpeg)
+![](./screenshots/Captura2.jpeg)
