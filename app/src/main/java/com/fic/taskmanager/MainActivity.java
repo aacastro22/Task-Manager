@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fic.taskmanager.data.appDatabase;
 import com.fic.taskmanager.data.task;
+import com.fic.taskmanager.ui.historyActivity;
 import com.fic.taskmanager.ui.taskFormActivity;
 import com.fic.taskmanager.ui.adapter.taskAdapter;
 
@@ -37,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
         btnAddtask.setOnClickListener(v ->
                 startActivity(new Intent(this, taskFormActivity.class))
         );
+
+        Button btnHistory = findViewById(R.id.btnHistory);
+        btnHistory.setOnClickListener(v ->
+                startActivity(new Intent(this, historyActivity.class)));
+
     }
 
     @Override

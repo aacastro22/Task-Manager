@@ -8,6 +8,7 @@
         android:theme="@style/Theme.TaskManager">
 
         <activity android:name=".ui.taskFormActivity" />
+        <activity android:name=".ui.historyActivity" android:exported="false"/>
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

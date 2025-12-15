@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.fic.taskmanager.R;
 import com.fic.taskmanager.data.appDatabase;
 import com.fic.taskmanager.data.task;
+import com.fic.taskmanager.data.history;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -18,33 +19,63 @@ import java.util.concurrent.Executors;
 
 public class taskFormActivity extends AppCompatActivity {
 
+    private EditText etTitle, etDescription;
+    private Button btnSave;
     private appDatabase db;
+    private int editingTaskId = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_task_form);
 
+        etTitle = findViewById(R.id.etTitle);
+        etDescription = findViewById(R.id.etDescription);
+        btnSave = findViewById(R.id.btnSave);
         db = appDatabase.getDatabase(this);
 
-        EditText etTitle = findViewById(R.id.etTitle);
-        EditText etDescription = findViewById(R.id.etDescription);
-        Button btnSave = findViewById(R.id.btnSave);
+        // Detectar si venimos a editar
+        if (getIntent().hasExtra("task_id")) {
+            editingTaskId = getIntent().getIntExtra("task_id", -1);
+            etTitle.setText(getIntent().getStringExtra("title"));
+            etDescription.setText(getIntent().getStringExtra("description"));
+            btnSave.setText("Actualizar tarea");
+        }
 
-        btnSave.setOnClickListener(v -> {
-            String title = etTitle.getText().toString().trim();
-            String desc = etDescription.getText().toString().trim();
+        btnSave.setOnClickListener(v -> saveTask());
+    }
 
-            if (title.isEmpty()) {
-                Toast.makeText(this, "El título no puede estar vacío", Toast.LENGTH_SHORT).show();
-                return;
+    private void saveTask() {
+        String title = etTitle.getText().toString().trim();
+        String desc = etDescription.getText().toString().trim();
+
+        if (title.isEmpty()) {
+            Toast.makeText(this, "El título no puede estar vacío", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Executors.newSingleThreadExecutor().execute(() -> {
+            String date = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(new Date());
+
+            if (editingTaskId == -1) {
+                // Insertar nueva
+                task newTask = new task(title, desc, date, false);
+                db.taskDao().insertTask(newTask);
+
+                history log = new history("insert_task", date, "Creó: " + title);
+                db.historyDao().insertHistory(log);
+            } else {
+                // Actualizar existente
+                task updatedTask = new task(title, desc, date, false);
+                updatedTask.setId(editingTaskId);
+                db.taskDao().updateTask(updatedTask);
+
+                history log = new history("update_task", date, "Actualizó: " + title);
+                db.historyDao().insertHistory(log);
             }
 
-            String createdAt = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).format(new Date());
-            task newtask = new task(title, desc, createdAt, false);
-
-            Executors.newSingleThreadExecutor().execute(() -> {
-                db.taskDao().insertTask(newtask);
+            runOnUiThread(() -> {
+                Toast.makeText(this, "Guardado correctamente", Toast.LENGTH_SHORT).show();
                 finish();
             });
         });

@@ -5,12 +5,13 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {task.class}, version = 1)
+@Database(entities = {task.class, history.class}, version = 2)
 public abstract class appDatabase extends RoomDatabase {
 
     private static volatile appDatabase INSTANCE;
 
     public abstract taskDao taskDao();
+    public abstract historyDao historyDao();
 
     public static appDatabase getDatabase(Context context) {
         if (INSTANCE == null) {
@@ -20,7 +21,9 @@ public abstract class appDatabase extends RoomDatabase {
                             context.getApplicationContext(),
                             appDatabase.class,
                             "task_manager_db"
-                    ).build();
+                    )
+                            .fallbackToDestructiveMigration()
+                            .build();
                 }
             }
         }
